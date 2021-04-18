@@ -1,52 +1,96 @@
 import java.util.*;
-class SnakeAndLadder
-{
+class SnakeAndLadder {
 //UC1 Initializing Starting position of game
 	static final int STARTINGPOSITION = 0;
 	static final int ENDINGPOSITION = 100;
-	public void GamePlayed()
+	static Random RANDOM = new Random();
+	static final int LADDER = 1;
+	static final int SNAKE = 2;
+	static final int NOPLAY = 0;
+	static String TASK ;
+	static final int PLAYER1 = 1;
+	static final int PLAYER2 = 2;
+	public int GamePlayed(int currentPosition, int DiceCount)
 	{
 //UC2 Initializing Rolling Dice
-		Random random = new Random();
-		int currentposition = STARTINGPOSITION ;
-		String task ;
-		int total_dice_count = 0;
-// UC4 while loop for repet till player won
-		System.out.println("Game Played by the player");
-		System.out.println(" ");
-		while( currentposition < ENDINGPOSITION )
+		if( currentPosition < ENDINGPOSITION )
 		{
-			int DICE = (random.nextInt(6)+1);
-			total_dice_count++;
+			int DICE = (RANDOM.nextInt(6)+1);
 //UC3 defining Snake, Ladder or no play
-			int action = random.nextInt(3);
-			if(action == 1 && (currentposition + DICE <= ENDINGPOSITION))
+			int action = RANDOM.nextInt(3);
+			switch(action)
 			{
-				currentposition = currentposition + DICE;
-				task = "Ladder";
-			//	System.out.println("Player moves for Ladder");
+				case LADDER:
+				if(currentPosition + DICE <= ENDINGPOSITION)
+				{
+					currentPosition = currentPosition + DICE;
+					TASK = "Ladder";
+				}
+				break;
+				case SNAKE:
+				if(currentPosition - DICE >= STARTINGPOSITION)
+				{
+					currentPosition = currentPosition - DICE;
+					TASK = "Snake";
+				}
+				break;
+				case NOPLAY:
+				currentPosition = currentPosition;
+				TASK = "noPlay";
+				break;
 			}
-			else if(action == 2 && (currentposition - DICE >= STARTINGPOSITION))
-			{
-
-				currentposition = currentposition - DICE;
-				task = "Snake";
-			//	System.out.println("Player moves for Snake");
-			}
-			else
-			{
-				task = "noPlay";
-			//	 System.out.println("No Play");
-			}
-			System.out.println(" | Dice: "+DICE+" for "+task+" and Current Position : "+currentposition+"| ");
+			System.out.println(" | Dice: "+DICE+" for "+TASK+" and Current Position : "+currentPosition+"| ");
 		}
-		System.out.println(" ");
-//UC6 total times dice throws
-		System.out.println("Total Count of Dice Throws : "+total_dice_count);
+		if(TASK == "Ladder" && currentPosition != ENDINGPOSITION)
+		{
+			DiceCount = dice_Player(DiceCount);
+			GamePlayed(currentPosition,DiceCount);
+		}
+		return currentPosition;
+	}
+// Dice count increment after every rolling dice
+	public int dice_Player(int diceCount)
+	{
+		diceCount++;
+		return diceCount;
+	}
+// Game played by two players
+	public void TwoPlayers()
+	{
+		int Player1position = STARTINGPOSITION ;
+		int Player2position = STARTINGPOSITION ;
+		int dice_count = STARTINGPOSITION ;
+		System.out.println("Game Started by two player");
+		while( Player1position < ENDINGPOSITION && Player2position < ENDINGPOSITION )
+		{
+			System.out.println("Player 1 :-  ");
+			Player1position = GamePlayed(Player1position,dice_count);
+			dice_count = dice_Player(dice_count);
+			System.out.println("-------------------------------------------------------------------------------------------------- ");
+			if(Player1position == ENDINGPOSITION)
+			{
+				break;
+			}
+			System.out.println("Player 2 :-  ");
+			Player2position = GamePlayed(Player2position,dice_count);
+			dice_count = dice_Player(dice_count);
+			System.out.println("---------------------------------------------------------------------------------------------------");
+		}
+		if(Player1position == ENDINGPOSITION)
+		{
+			System.out.println();
+			System.out.println("Player 1 Won The Match ");
+		}
+		else if(Player2position == ENDINGPOSITION)
+		{
+			System.out.println();
+			System.out.println("Player 2 Won The Match ");
+		}
+		System.out.println("Total Dice Count of both Players "+dice_count);
 	}
 	public static void main(String args[])
 	{
-		SnakeAndLadder	Player = new SnakeAndLadder();	
-		Player.GamePlayed();
+		SnakeAndLadder	Player = new SnakeAndLadder();
+		Player.TwoPlayers();
 	}
 }
